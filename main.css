@@ -1,0 +1,18 @@
+input.spinner {
+    background: url(images/319.gif) no-repeat right white;
+}
+
+footer {
+    color: gray;
+    font-size: 10px;
+    margin-top: 3em;
+    text-align: center;
+}
+
+#footer a {
+    color: #666699;
+}
+
+h1 {
+    padding: 10px 0px;
+}

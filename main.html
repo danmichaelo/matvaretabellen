@@ -1,0 +1,26 @@
+## -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:et:sw=4:ts=4:sts=4
+<%inherit file="base.html"/>\
+<%block name="header">
+    <script src="matvaretabellen.js"></script>
+</%block>\
+
+<div class="container">
+    <form method="get" class="well" action="./">
+        <p>
+        	Du kan f.eks. finne næringsinnholdet i egg:
+        	<a href="#"><code>http://www.matvaretabellen.no/egg-raa-02.001</code></a>
+        </p>
+        <div class="input-append">
+            <input type="text" name="url" id="url" placeholder="URL" class="span11" />
+            <button type="submit" class="btn btn-primary">Ok</button> 
+        </div>
+        <label for="strip-zero-values" class="checkbox">
+            <input type="checkbox" name="strip-zero-values" id="strip-zero-values" />
+            Ikke ta med null-verdier
+        </label>
+    </form>
+</div>
+
+<div class="container" id="result">
+    <pre></pre>
+</div>
