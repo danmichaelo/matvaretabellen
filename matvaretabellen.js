@@ -17,14 +17,10 @@ $(document).ready(function() {
 			'strip-null-values': $('#strip-zero-values').is(':checked') 
 		};
 		e.preventDefault();
+		$('#result').slideUp();
 		$.get('./', data, function(response) {
 			$('pre').html(response)
-			if ($('#result').is(':visible')) {
-				$('#result').stop().css("background-color", "#FFFF9C")
-					.animate({ backgroundColor: "#FFFFFF"}, 1500);
-			} else {
-				$('#result').slideDown();
-			}
+			$('#result').slideDown();
 		})
 	});
 

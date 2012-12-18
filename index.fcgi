@@ -5,6 +5,7 @@ import re
 import gzip
 import StringIO
 import urllib2
+from urllib2 import HTTPError
 from bs4 import BeautifulSoup
 
 from flup.server.fcgi import WSGIServer
@@ -95,7 +96,11 @@ def check_url(url, strip_null_values):
         'Referer': 'http://toolserver.org/~danmichaelo/matvaretabellen',
         'Accept-Encoding': 'gzip'
     })
-    f = urllib2.urlopen(req)
+    try:
+        f = urllib2.urlopen(req)
+    except HTTPError as e:
+        return '%d %s' % (e.code, e.msg)
+
     headers = f.info()
     data = f.read()
     if headers.get('Content-Encoding') in ('gzip', 'x-gzip'):
@@ -105,7 +110,13 @@ def check_url(url, strip_null_values):
 
     title = soup.find(id='content').find('h2').text
     tpl = NutritionalValue(url, title, strip_null_values)
-    for row in soup.find(id='content').find('tbody').find_all('tr'):
+    content = soup.find(id='content')
+    if content == None:
+        return "invalid page"
+    tbody = content.find('tbody')
+    if tbody == None:
+        return "invalid page"
+    for row in tbody.find_all('tr'):
         cols = row.find_all('td')
         navn = cols[0].text.lower()
         val = cols[1].text
