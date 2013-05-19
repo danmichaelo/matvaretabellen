@@ -1,3 +1,7 @@
+header {
+padding-top: 10px;
+padding-bottom: 10px;
+}
 input.spinner {
     background: url(images/319.gif) no-repeat right white;
 }

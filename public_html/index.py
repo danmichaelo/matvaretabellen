@@ -1,5 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:et:sw=4:ts=4:sts=4
+import cgitb
+cgitb.enable()
+
+import sys
+sys.path.insert(0, '/data/project/matvaretabellen/env-py2.7/lib/python2.7/site-packages/')
 
 import re
 import gzip
@@ -8,7 +13,7 @@ import urllib2
 from urllib2 import HTTPError
 from bs4 import BeautifulSoup
 
-from flup.server.fcgi import WSGIServer
+from wsgiref.handlers import CGIHandler
 from mako.template import Template
 from mako.lookup import TemplateLookup
 from cgi import parse_qs, escape
@@ -145,4 +150,4 @@ def app(environ, start_response):
         tpl = Template(filename='main.html', input_encoding='utf-8', output_encoding='utf-8', lookup=lookup)
         yield tpl.render_unicode().encode('utf-8')
 
-WSGIServer(app).run()
+CGIHandler().run(app)
