@@ -1,22 +1,22 @@
-#!/usr/bin/python
-# -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:et:sw=4:ts=4:sts=4
-import cgitb
-cgitb.enable()
+# encoding=utf8
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
 
-import sys
-sys.path.insert(0, '/data/project/matvaretabellen/env-py2.7/lib/python2.7/site-packages/')
+from flask import Flask
+from flask import render_template
+from flask import request
 
+from time import time
 import re
 import gzip
 import StringIO
 import urllib2
 from urllib2 import HTTPError
 from bs4 import BeautifulSoup
+import requests
 
-from wsgiref.handlers import CGIHandler
-from mako.template import Template
-from mako.lookup import TemplateLookup
-from cgi import parse_qs, escape
+app = Flask(__name__)
 
 known_keys = {
     'vann': 'vann',
@@ -96,20 +96,16 @@ def check_url(url, strip_null_values):
     if not re.match(r'^http://(www\.)matvaretabellen\.no', url): 
         return 'Ohlalalaa, thats a weird url, no? Not one of matvaretabellen.no, eh?'
 
-    req = urllib2.Request(url, headers={
+    req = requests.get(url, headers={
         'User-Agent': u'Næringsinnhold (+http://toolserver.org/~danmichaelo/matvaretabellen)'.encode('utf-8'),
         'Referer': 'http://toolserver.org/~danmichaelo/matvaretabellen',
         'Accept-Encoding': 'gzip'
     })
-    try:
-        f = urllib2.urlopen(req)
-    except HTTPError as e:
-        return '%d %s' % (e.code, e.msg)
 
-    headers = f.info()
-    data = f.read()
-    if headers.get('Content-Encoding') in ('gzip', 'x-gzip'):
-        data = gzip.GzipFile(fileobj=StringIO.StringIO(data)).read()
+    headers = req.headers
+    data = req.text
+    #if headers.get('Content-Encoding') in ('gzip', 'x-gzip'):
+    #    data = gzip.GzipFile(fileobj=StringIO.StringIO(data)).read()
     
     soup = BeautifulSoup(data)
 
@@ -137,17 +133,17 @@ def check_url(url, strip_null_values):
 
     return str(tpl)
 
-def app(environ, start_response):
+@app.route('/')
+def show_index():
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    url = request.args.get('url', '')
+    stripnull = request.args.get('strip-null-values', 'false') == 'true'
 
-    lookup = TemplateLookup(directories=['.'], input_encoding='utf-8', output_encoding='utf-8')
-
-    parameters = parse_qs(environ.get('QUERY_STRING', ''))
-    if 'url' in parameters:
-        yield check_url(parameters['url'][0], parameters['strip-null-values'][0] == "true")
+    if url != '':
+        return check_url(url, stripnull)
     else:
-        tpl = Template(filename='main.html', input_encoding='utf-8', output_encoding='utf-8', lookup=lookup)
-        yield tpl.render_unicode().encode('utf-8')
+        return render_template('main.html')
 
-CGIHandler().run(app)
+if __name__ == '__main__':
+    app.run()
+

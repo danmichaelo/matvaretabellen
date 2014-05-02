@@ -1,9 +1,8 @@
-## -*- coding: utf-8; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:et:sw=4:ts=4:sts=4
-<%inherit file="base.html"/>\
-<%block name="header">
+{% extends "base.html" %}
+{% block header %}
     <script src="matvaretabellen.js"></script>
-</%block>\
-
+{% endblock %}
+{% block content %}
 <div class="container">
     <form method="get" class="well" action="./">
         <p>
@@ -24,3 +23,4 @@
 <div class="container" id="result">
     <pre></pre>
 </div>
+{% endblock %}
