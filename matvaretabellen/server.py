@@ -1,16 +1,9 @@
 # encoding=utf8
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
-
 import os, sys 
-sys.path.insert(0, '/data/project/matvaretabellen/ENV/lib/python2.7/site-packages')
-
 from flup.server.fcgi import WSGIServer
-from .app import app 
-
 import logging
 import logging.handlers
+from .app import app 
 
 
 logger = logging.getLogger()

@@ -1,8 +1,4 @@
 # encoding=utf8
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
-
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -10,9 +6,9 @@ from flask import request
 from time import time
 import re
 import gzip
-import StringIO
-import urllib2
-from urllib2 import HTTPError
+import io
+import urllib.request, urllib.error, urllib.parse
+from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 import requests
 
@@ -76,19 +72,16 @@ class NutritionalValue(object):
             if val != "0" or self.strip_null_values == False:
                 self.items.append([s,val,unit])
     
-    def __unicode__(self):
-        out = [u'{{Næringsinnhold',
+    def __str__(self):
+        out = ['{{Næringsinnhold',
             ' | navn = %s' % self.name,
             ' | mengde = 100 g',
             ' | energi = %s kcal / %s kJ' % (self.kcal, self.kJ)]
         for name, val, unit in self.items:
-            out.append(u' | %s = %s %s' % (name,val,unit))
+            out.append(' | %s = %s %s' % (name,val,unit))
         out.append(' | kilde = [%s Matvaretabellen]' % self.url)
         out.append('}}')
         return '\n'.join(out)
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
 
 
 def check_url(url, strip_null_values):
@@ -97,7 +90,7 @@ def check_url(url, strip_null_values):
         return 'Ohlalalaa, thats a weird url, no? Not one of matvaretabellen.no, eh?'
 
     req = requests.get(url, headers={
-        'User-Agent': u'Næringsinnhold (+http://toolserver.org/~danmichaelo/matvaretabellen)'.encode('utf-8'),
+        'User-Agent': 'Næringsinnhold (+http://toolserver.org/~danmichaelo/matvaretabellen)',
         'Referer': 'http://toolserver.org/~danmichaelo/matvaretabellen',
         'Accept-Encoding': 'gzip'
     })

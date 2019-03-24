@@ -1,5 +1,8 @@
 ENV
+www/python/venv
 *.sublime-project
 *.sublime-workspace
 *.log
 *.pyc
+*.egg-info
+
